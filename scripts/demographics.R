@@ -1,4 +1,5 @@
 library(tidyverse)
+library(viridis)
 
 
 data <- read.csv("data/survey_likerts.csv")
@@ -9,7 +10,16 @@ data$organization <- recode_factor(data$organization,
                                    "Non-government agency (e.g., Nature Conservancy Canada, Ducks Unlimited Canada)" = "Non-government Agency",
                                    "Canadian provincial or territorial government agency" = "Provincial/Territorial Government",
                                    "Canadian federal government agency" = "Federal Government")
+unique(orgs$organization)
 
+org_colour = c("Non-government Agency" = '#277f8e',
+               'Provincial/Territorial Government' = '#a0da39',
+               'Federal Government' = '#4ac16d',
+               'Municipal agency' = '#1fa187',
+               'Other' = '#fde725',
+               'Conservation authority' = '#365c8d',
+               'Industry/private company' = '#46327e',
+               'Indigenous government' = '#440154')
 
 
 
@@ -22,23 +32,62 @@ colnames(orgs)
 orgs %>% mutate(organization = fct_reorder(organization,
                                            n, .desc = FALSE)) %>% 
             ggplot() + 
-            geom_segment( aes(x = organization, xend = organization, 
-                              y = 0, yend = n),
-                colour = "#e76f51", lwd = 5) +
-  geom_point(aes(x = organization, y = n), colour = "#e76f51",
-             fill = "white", size=7, shape = 19, stroke = 1.5) +
+            geom_segment(aes(x = organization, xend = organization, 
+                              y = 0, yend = n, 
+                             colour = org_colour),lwd = 5) +
+  geom_point(aes(x = organization, y = n, colour = org_colour),
+             size=7, shape = 19, stroke = 1.5) +
             coord_flip() +
             xlab(" ") +
             ylab("Count") +
             theme_minimal() +
             theme(axis.text = element_text(size = 17),
                   axis.title = element_text(size = 17),
-                  #legend.position = "none",
+                  legend.position = "none",
                   legend.key.size = unit(1, 'cm'),
                   legend.text = element_text(size = 12),
                   #legend.direction = "horizontal",
                   legend.title = element_blank()) +
-            ylim(0, 50)
+            ylim(0, 50) +
+            scale_colour_viridis(discrete = TRUE)
+
+
+
+###### years worked
+
+colnames(data)
+
+duration <- data %>% group_by(organization) %>% 
+            count(duration)
+duration <- duration[-35,]
+duration <- duration[-20,]
+
+unique(duration$duration)
+
+
+duration %>% ggplot(aes(fill = organization, y = n, 
+                        x = factor(duration,
+                                   level = c('Less than 1 year',
+                                             '1 - 2 years',
+                                             '3 - 5 years',
+                                             '5 - 10 years',
+                                             'Over 10 years')))) +
+            geom_bar(position = "dodge", stat = "identity") +
+            theme_minimal() +
+            coord_flip() +
+            xlab(" ") +
+            ylab("Count") +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 18),
+                  axis.title = element_text(size = 18),
+                  legend.position = c(0.8,0.3),
+                  legend.key.size = unit(1, 'cm'),
+                  legend.text = element_text(size = 12),
+                  #legend.direction = "horizontal",
+                  legend.title = element_blank()) +
+            scale_fill_manual(values = org_colour)
+
+
 
 
 
