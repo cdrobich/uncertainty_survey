@@ -340,7 +340,7 @@ collab %>% ggplot(aes(fill = rank, y = count, label = count,
 ## Political Will
 
 PW <- breakdown %>%
-            filter(CODE %in% c('POLITICAL_WILL', 'LEGISLATION'))
+            filter(CODE %in% c('POLITICAL_WILL'))
 
 PW %>% ggplot(aes(fill = rank, y = count, label = count,
                       x = CODE)) + 
@@ -360,7 +360,8 @@ PW %>% ggplot(aes(fill = rank, y = count, label = count,
                       position = position_stack(vjust = 0.55)) +
             guides(fill = guide_legend(reverse = TRUE,
                                        label.position = "bottom")) +
-            scale_fill_manual(values = colours)
+            scale_fill_manual(values = colours) +
+            ylim(0, 100)
 
 
 

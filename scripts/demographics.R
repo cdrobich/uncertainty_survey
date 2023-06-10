@@ -24,8 +24,8 @@ orgs %>% mutate(organization = fct_reorder(organization,
             ggplot() + 
             geom_segment( aes(x = organization, xend = organization, 
                               y = 0, yend = n),
-                colour = "#2a9d8f", lwd = 3) +
-  geom_point(aes(x = organization, y = n), colour = "#2a9d8f",
+                colour = "#e76f51", lwd = 5) +
+  geom_point(aes(x = organization, y = n), colour = "#e76f51",
              fill = "white", size=7, shape = 19, stroke = 1.5) +
             coord_flip() +
             xlab(" ") +
@@ -59,15 +59,15 @@ loc %>% mutate(location = fct_reorder(location,
             ggplot() + 
             geom_segment( aes(x = location, xend = location, 
                               y = 0, yend = n),
-                          colour = "#e76f51", lwd = 3) +
-            geom_point(aes(x = location, y = n), colour = "#e76f51",
+                          colour = "#2a9d8f", lwd = 4) +
+            geom_point(aes(x = location, y = n), colour = "#2a9d8f",
                        fill = "white", size=6, shape = 19, stroke = 1.5) +
             coord_flip() +
             xlab(" ") +
             ylab("Count") +
             theme_minimal() +
-            theme(axis.text = element_text(size = 17),
-                  axis.title = element_text(size = 17),
+            theme(axis.text = element_text(size = 18),
+                  axis.title = element_text(size = 18),
                   #legend.position = "none",
                   legend.key.size = unit(1, 'cm'),
                   legend.text = element_text(size = 12),
