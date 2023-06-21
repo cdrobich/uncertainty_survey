@@ -93,7 +93,7 @@ ggplot(data = likert_often, aes(x = type, y = percent, fill = ranking)) +
 ggplot(data = t, aes(x = type, y = percent, fill = ranking)) +
             geom_bar(stat="identity", width = 0.7) +
             scale_fill_manual(values = colours)+
-            theme_classic() +
+            theme_grey() +
             coord_flip() +
             ylab("Percentage (%)") +
             xlab(" ") +
@@ -151,7 +151,7 @@ f
 ggplot(data = f, aes(x = Impact, y = percent, fill = ranking)) +
             geom_bar(stat="identity", width = 0.7) +
             scale_fill_manual(values = colours_imp)+
-            theme_classic() +
+            theme_gray() +
             coord_flip() +
             ylab("Percentage (%)") +
             xlab(" ") +
