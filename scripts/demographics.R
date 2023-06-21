@@ -1,5 +1,6 @@
 library(tidyverse)
 library(viridis)
+library(stringr)
 
 
 data <- read.csv("data/survey_likerts.csv")
@@ -11,6 +12,17 @@ data$organization <- recode_factor(data$organization,
                                    "Canadian provincial or territorial government agency" = "Provincial/Territorial Government",
                                    "Canadian federal government agency" = "Federal Government")
 unique(orgs$organization)
+
+
+data$duration <- recode_factor(data$duration,
+                               "Over 10 years" = "over 10 years")
+
+
+
+data %>% count(duration)
+
+
+
 
 org_colour = c("Non-government Agency" = '#277f8e',
                'Provincial/Territorial Government' = '#a0da39',
@@ -39,7 +51,7 @@ orgs %>% mutate(organization = fct_reorder(organization,
              size=7, shape = 19, stroke = 1.5) +
             coord_flip() +
             xlab(" ") +
-            ylab("Count") +
+            ylab("Number of respondents") +
             theme_minimal() +
             theme(axis.text = element_text(size = 17),
                   axis.title = element_text(size = 17),
@@ -124,61 +136,101 @@ loc %>% mutate(location = fct_reorder(location,
                   legend.title = element_blank()) +
             ylim(0, 70)
 
+############ LIKERT ###########33
 
 colnames(data)
 
-collab_within_org <- data %>% group_by(organization) %>% 
+unique(data$organization)
+
+likert <- data %>% filter(organization %in% org_list)
+
+colours = c("Always" = "#264653",
+            "Most of the time" = "#2A9D8F",
+            "Never" = "#E9C46A",
+            "About half the time" = "#F4A261",
+            "Sometimes" = "#e76F51")
+
+
+likert$collaborative_within <- factor(likert$collaborative_within, levels = c('Never',
+                                                'Sometimes',
+                                                'About half the time',
+                                                'Most of the time',
+                                                'Always'))
+
+
+
+org_list <- c("Conservation authority",
+              "Non-government Agency",
+              "Federal Government",
+              "Industry/private company",
+              "Provincial/Territorial Government")
+
+##### Decision making within my org. is collaborative #####
+collab_within_org <- likert %>% group_by(organization) %>% 
             count(collaborative_within)
 
-collab_within_org <- collab_within_org[-27,]
+
+collab_within_org <- collab_within_org[-5,]
+
+collab_within_org2 <- read.csv("collaborative_within.csv")
+
+### add a 'never' for each org
 
 collab_within_org %>% ggplot(aes(fill = collaborative_within, y = n, 
                                  label = n,
                          x = organization)) + 
             geom_bar(position = "dodge", stat = "identity") +
-            #coord_flip() +
+            coord_flip() +
             xlab(" ") +
             ylab("Count") +
-            theme_minimal() 
-            # theme(axis.text = element_text(size = 20),
-            #       axis.title = element_text(size = 20),
-            #       #legend.position = "none",
-            #       legend.key.size = unit(1, 'cm'),
-            #       legend.text = element_text(size = 12),
-            #       #legend.direction = "horizontal",
-            #       legend.title = element_blank()) 
-            # geom_text(size = 10, alpha = 1, colour = "white",
-            #           position = position_stack(vjust = 0.55)) +
-            # guides(fill = guide_legend(reverse = TRUE,
-            #                            label.position = "bottom")) +
-            # scale_fill_manual(values = colours)
+            theme_minimal() +
+            theme(axis.text = element_text(size = 15),
+                  axis.title = element_text(size = 15),
+                  legend.position = "none",
+                  legend.key.size = unit(0.5, 'cm'),
+                  legend.text = element_text(size = 12),
+                  #legend.direction = "horizontal",
+                   legend.title = element_blank(),
+                  plot.title = element_text(size = 15, face = "bold")) +
+            scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+            scale_fill_manual(values = colours) +
+            guides(fill = guide_legend(reverse = TRUE)) +
+            ggtitle("...collaborative within my organization") +
+            ylim(0,20)
 
 
-
-
-
-
-
-
-
-
-collab_within_org <- collab_within_org[5:31,]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-collab_outside_org <- data %>% group_by(organization) %>% 
+collab_outside_org <- likert %>% group_by(organization) %>% 
             count(collaborative_outside)
 
+collab_outside_org <- collab_outside_org[-5,]
+
+
+
+collab_outside_org$collaborative_outside <- factor(collab_outside_org$collaborative_outside, levels = c('Never',
+                                                                              'Sometimes',
+                                                                              'About half the time',
+                                                                              'Most of the time',
+                                                                              'Always'))
+
+
+
+collab_outside_org %>% ggplot(aes(fill = collaborative_outside, y = n, 
+                                 label = n,
+                                 x = organization)) + 
+            geom_bar(position = "dodge", stat = "identity") +
+            coord_flip() +
+            xlab(" ") +
+            ylab("Count") +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 15),
+                  axis.title = element_text(size = 15),
+                  legend.position = "none",
+                  #legend.key.size = unit(0.5, 'cm'),
+                  legend.text = element_text(size = 12),
+                  legend.title = element_blank(),
+                  plot.title = element_text(size = 15, face = "bold")) +
+            scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+            scale_fill_manual(values = colours) +
+            guides(fill = guide_legend(reverse = TRUE)) +
+            ggtitle("...collaborative outside my organization") +
+            ylim(0, 20)

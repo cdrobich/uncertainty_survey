@@ -1,0 +1,36 @@
+"","Impact","ranking","count","Sum","percent","na.rm"
+"1","The environment (e.g., any physical or ecological aspect of a system)","Strongly.agree",26,143,18.18,TRUE
+"2","The environment (e.g., any physical or ecological aspect of a system)","Agree",74,143,51.75,TRUE
+"3","The environment (e.g., any physical or ecological aspect of a system)","Neither.agree.nor.disagree",28,143,19.58,TRUE
+"4","The environment (e.g., any physical or ecological aspect of a system)","Disagree",11,143,7.69,TRUE
+"5","The environment (e.g., any physical or ecological aspect of a system)","Strongly.disagree",4,143,2.8,TRUE
+"6","The evidence (e.g., existing knowledge on an intervention or management strategy)","Strongly.agree",36,143,25.17,TRUE
+"7","The evidence (e.g., existing knowledge on an intervention or management strategy)","Agree",74,143,51.75,TRUE
+"8","The evidence (e.g., existing knowledge on an intervention or management strategy)","Neither.agree.nor.disagree",25,143,17.48,TRUE
+"9","The evidence (e.g., existing knowledge on an intervention or management strategy)","Disagree",7,143,4.9,TRUE
+"10","The evidence (e.g., existing knowledge on an intervention or management strategy)","Strongly.disagree",1,143,0.7,TRUE
+"11","The actions or decisions of teammates, and/or colleagues)","Strongly.agree",11,143,7.69,TRUE
+"12","The actions or decisions of teammates, and/or colleagues)","Agree",59,143,41.26,TRUE
+"13","The actions or decisions of teammates, and/or colleagues)","Neither.agree.nor.disagree",46,143,32.17,TRUE
+"14","The actions or decisions of teammates, and/or colleagues)","Disagree",23,143,16.08,TRUE
+"15","The actions or decisions of teammates, and/or colleagues)","Strongly.disagree",4,143,2.8,TRUE
+"16","The actions or decisions of leaders of my agency or organization)","Strongly.agree",32,143,22.38,TRUE
+"17","The actions or decisions of leaders of my agency or organization)","Agree",64,143,44.76,TRUE
+"18","The actions or decisions of leaders of my agency or organization)","Neither.agree.nor.disagree",30,143,20.98,TRUE
+"19","The actions or decisions of leaders of my agency or organization)","Disagree",16,143,11.19,TRUE
+"20","The actions or decisions of leaders of my agency or organization)","Strongly.disagree",1,143,0.7,TRUE
+"21","The actions or decisions of elected leaders)","Strongly.agree",55,143,38.46,TRUE
+"22","The actions or decisions of elected leaders)","Agree",57,143,39.86,TRUE
+"23","The actions or decisions of elected leaders)","Neither.agree.nor.disagree",22,143,15.38,TRUE
+"24","The actions or decisions of elected leaders)","Disagree",8,143,5.59,TRUE
+"25","The actions or decisions of elected leaders)","Strongly.disagree",1,143,0.7,TRUE
+"26","The actions or decisions of stakeholders or rightsholders.)","Strongly.agree",28,143,19.58,TRUE
+"27","The actions or decisions of stakeholders or rightsholders.)","Agree",68,143,47.55,TRUE
+"28","The actions or decisions of stakeholders or rightsholders.)","Neither.agree.nor.disagree",37,143,25.87,TRUE
+"29","The actions or decisions of stakeholders or rightsholders.)","Disagree",10,143,6.99,TRUE
+"30","The actions or decisions of stakeholders or rightsholders.)","Strongly.disagree",0,143,0,TRUE
+"31","Funding (e.g., availability and timelines)","Strongly.agree",59,143,41.26,TRUE
+"32","Funding (e.g., availability and timelines)","Agree",52,143,36.36,TRUE
+"33","Funding (e.g., availability and timelines)","Neither.agree.nor.disagree",22,143,15.38,TRUE
+"34","Funding (e.g., availability and timelines)","Disagree",7,143,4.9,TRUE
+"35","Funding (e.g., availability and timelines)","Strongly.disagree",3,143,2.1,TRUE
