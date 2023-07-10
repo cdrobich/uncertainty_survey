@@ -1,6 +1,7 @@
 library(tidyverse)
 library(viridis)
 library(stringr)
+library(patchwork)
 
 
 data <- read.csv("data/survey_likerts.csv")
@@ -11,15 +12,47 @@ data$organization <- recode_factor(data$organization,
                                    "Non-government agency (e.g., Nature Conservancy Canada, Ducks Unlimited Canada)" = "Non-government Agency",
                                    "Canadian provincial or territorial government agency" = "Provincial/Territorial Government",
                                    "Canadian federal government agency" = "Federal Government")
-unique(orgs$organization)
+unique(data$organization)
+
+
+data %>% count(organization) 
+
+#                        organization   n
+# 1             Non-government Agency  44
+# 2 Provincial/Territorial Government  31
+# 3                Federal Government  30
+# 4                  Municipal agency   2
+# 5                             Other  10
+# 6            Conservation authority  22
+# 7          Industry/private company   9
+# 9             Indigenous government   1
+
 
 
 data$duration <- recode_factor(data$duration,
                                "Over 10 years" = "over 10 years")
 
 
+data$duration <- recode_factor(data$duration,
+                               "over 10 years" = "> 10 years",
+                               "Less than 1 year" = "< 1 year")
+unique(data$duration)
 
-data %>% count(duration)
+count <- data %>% count(duration)
+count <- count[-6,]
+
+count %>%  
+          mutate(Sum = sum(n)) %>% 
+          group_by(duration) %>% 
+          mutate(percent = round(100*n/Sum, 2))
+
+# duration         n   Sum percent
+# 1 > 10 years      62   148   41.9 
+# 2 < 1 year        12   148    8.11
+# 3 1 - 2 years     18   148   12.2 
+# 4 3 - 5 years     26   148   17.6 
+# 5 5 - 10 years    30   148   20.3 
+
 
 
 
@@ -41,27 +74,27 @@ colnames(orgs)
 
 
 
-orgs %>% mutate(organization = fct_reorder(organization,
+org_n <- orgs %>% mutate(organization = fct_reorder(organization,
                                            n, .desc = FALSE)) %>% 
             ggplot() + 
             geom_segment(aes(x = organization, xend = organization, 
                               y = 0, yend = n, 
-                             colour = org_colour),lwd = 5) +
-  geom_point(aes(x = organization, y = n, colour = org_colour),
+                             colour = organization),lwd = 5) +
+  geom_point(aes(x = organization, y = n, colour = organization),
              size=7, shape = 19, stroke = 1.5) +
             coord_flip() +
             xlab(" ") +
             ylab("Number of respondents") +
             theme_minimal() +
-            theme(axis.text = element_text(size = 17),
-                  axis.title = element_text(size = 17),
+            theme(axis.text = element_text(size = 13),
+                  axis.title = element_text(size = 13),
                   legend.position = "none",
                   legend.key.size = unit(1, 'cm'),
                   legend.text = element_text(size = 12),
                   #legend.direction = "horizontal",
                   legend.title = element_blank()) +
             ylim(0, 50) +
-            scale_colour_viridis(discrete = TRUE)
+            scale_colour_manual(values = org_colour)
 
 
 
@@ -71,37 +104,38 @@ colnames(data)
 
 duration <- data %>% group_by(organization) %>% 
             count(duration)
-duration <- duration[-35,]
+duration <- duration[-31,]
 duration <- duration[-20,]
 
 unique(duration$duration)
 
 
-duration %>% ggplot(aes(fill = organization, y = n, 
+duration_n <- duration %>% ggplot(aes(fill = organization, y = n, 
                         x = factor(duration,
-                                   level = c('Less than 1 year',
+                                   level = c('< 1 year',
                                              '1 - 2 years',
                                              '3 - 5 years',
                                              '5 - 10 years',
-                                             'Over 10 years')))) +
+                                             '> 10 years')))) +
             geom_bar(position = "dodge", stat = "identity") +
             theme_minimal() +
             coord_flip() +
             xlab(" ") +
-            ylab("Count") +
+            ylab("Number of respondents") +
             theme_minimal() +
-            theme(axis.text = element_text(size = 18),
-                  axis.title = element_text(size = 18),
-                  legend.position = c(0.8,0.3),
-                  legend.key.size = unit(1, 'cm'),
+            theme(axis.text = element_text(size = 13),
+                  axis.title = element_text(size = 13),
+                  legend.position = c(0.65,0.2),
+                  legend.key.size = unit(0.5, 'cm'),
                   legend.text = element_text(size = 12),
                   #legend.direction = "horizontal",
                   legend.title = element_blank()) +
             scale_fill_manual(values = org_colour)
 
 
-
-
+org_dur <- org_n + duration_n  + 
+            plot_layout(ncol = 2, widths = c(1,2)) +
+            plot_annotation(tag_levels = 'A')
 
 ### location
 
@@ -115,7 +149,7 @@ write.csv(loc, "location.csv")
 
 
 
-loc %>% mutate(location = fct_reorder(location,
+location_n <- loc %>% mutate(location = fct_reorder(location,
                                            n, .desc = FALSE)) %>% 
             ggplot() + 
             geom_segment( aes(x = location, xend = location, 
@@ -125,7 +159,7 @@ loc %>% mutate(location = fct_reorder(location,
                        fill = "white", size=6, shape = 19, stroke = 1.5) +
             coord_flip() +
             xlab(" ") +
-            ylab("Count") +
+            ylab("Number of respondents") +
             theme_minimal() +
             theme(axis.text = element_text(size = 18),
                   axis.title = element_text(size = 18),
@@ -135,6 +169,9 @@ loc %>% mutate(location = fct_reorder(location,
                   #legend.direction = "horizontal",
                   legend.title = element_blank()) +
             ylim(0, 70)
+
+
+
 
 ############ LIKERT ###########33
 
