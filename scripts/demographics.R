@@ -46,14 +46,14 @@ count %>%
           group_by(duration) %>% 
           mutate(percent = round(100*n/Sum, 2))
 
-# duration         n   Sum percent
+#   duration         n   Sum percent
 # 1 > 10 years      62   148   41.9 
 # 2 < 1 year        12   148    8.11
 # 3 1 - 2 years     18   148   12.2 
 # 4 3 - 5 years     26   148   17.6 
 # 5 5 - 10 years    30   148   20.3 
 
-
+41.9 + 20.3
 
 
 
