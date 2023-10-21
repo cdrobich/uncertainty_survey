@@ -105,7 +105,7 @@ colnames(data)
 duration <- data %>% group_by(organization) %>% 
             count(duration)
 duration <- duration[-31,]
-duration <- duration[-20,]
+duration <- duration[-25,]
 
 unique(duration$duration)
 

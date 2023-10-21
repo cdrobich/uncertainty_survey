@@ -5,7 +5,7 @@ library(forcats)
 q1 <- read.csv("data/question1_28jun23.csv")
 
 q1_sum <- q1
-q1_sum$sum <- rowSums(q1[,2:6])
+q1_sum$sum <- rowSums(q1[,3:7])
 
 str(q1)
 
@@ -18,6 +18,17 @@ q1_sum %>% mutate(CODE = fct_reorder(CODE, sum, .desc = FALSE)) %>%
             geom_segment(aes(x = CODE, xend = CODE, y = 0, yend = sum),
                          lwd = 2) +
             geom_point( size = 6, alpha = 1) +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 13)) +
+            ylab("Count") +
+            xlab(" ") 
+
+q1_sum %>% mutate(THEME = fct_reorder(THEME , sum, .desc = FALSE)) %>%
+            ggplot(aes(x = THEME , y = sum)) +
+            geom_segment(aes(x = THEME , xend = THEME , y = 0, yend = sum),
+                         lwd = 2) +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -658,5 +669,400 @@ ggsave("output/panel_final.tiff",
 
 
 ggsave("output/panel_final.pdf",
+       width = 20,
+       height = 14)
+
+
+
+# Themes ------------------------------------------------------------------
+theme_long <- q1 %>% select(THEME,RANK1:RANK5) %>%
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+theme_long$THEME <- as.factor(theme_long$THEME)
+
+
+theme_long$rank <- factor(theme_long$rank, levels = c('RANK5',
+                                                'RANK4',
+                                                'RANK3',
+                                                'RANK2',
+                                                'RANK1'))
+
+
+
+unique(theme_long$THEME)
+
+
+# Stacked
+
+colours = c("RANK1" = "#264653",
+            "RANK2" = "#2A9D8F",
+            "RANK3" = "#E9C46A",
+            "RANK4" = "#F4A261",
+            "RANK5" = "#e76F51")
+
+q1_sum %>% group_by(THEME) %>% 
+            summarise(summed = sum(sum)) %>% 
+            arrange(desc(summed))
+
+#   THEME                 summed
+# 1 Data                     160
+# 2 Resources                129
+# 3 Governance               127
+# 4 Evidence                 106
+# 5 Public_support            60
+# 6 Social_complexity         59
+# 7 Ecological_complexity     51
+# 8 Other                     24
+
+
+theme_bar <- theme_long %>%
+            ggplot(aes(fill = rank, y = count, #label = count,
+                       x = factor(THEME,
+                                  level = c('Other',
+                                 'Ecological_complexity',
+                                 'Social_complexity',
+                                 'Public_support',
+                                 'Evidence',
+                                 'Governance',
+                                 'Resources',
+                                 'Data')))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            coord_flip() +
+            xlab(" ") +
+            ylab("Count") +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 20),
+                  axis.title = element_text(size = 20),
+                  legend.position = "none",
+                  legend.title = element_blank()) +
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('Other',
+                                        'Ecological_complexity' = 'Ecological Complexity',
+                                        'Social_complexity' = 'Social Complexity',
+                                        'Public_support' = 'Public Support',
+                                        'Evidence',
+                                        'Governance',
+                                        'Resources',
+                                        'Data')) +
+            ggtitle('Themes') 
+
+
+            # guides(fill = guide_legend(reverse = TRUE,
+            #                            label.position = "bottom"))
+
+                  # legend.key.size = unit(0.7, 'cm'),
+                  # legend.text = element_text(size = 10),
+                  # legend.direction = "horizontal",
+                  # legend.title = element_blank()) +
+            # geom_text(size = 4, alpha = 1, colour = "white",
+            #           position = position_stack(vjust = 0.55)) +
+         
+             
+
+
+
+### Resources ranks #####
+
+resources_long <- q1 %>% filter(THEME == "Resources") %>% 
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+
+resources_long$rank <- factor(resources_long$rank, levels = c('RANK5',
+                                                'RANK4',
+                                                'RANK3',
+                                                'RANK2',
+                                                'RANK1'))
+
+resources <- resources_long %>% 
+            ggplot(aes(y = count, fill = rank,
+                       x = factor(CODE,
+                                  level = c('EXPERTISE',
+                                            'TIMELINES',
+                                            'PERSONNEL',
+                                            'RESOURCES_CAPACITY',
+                                            'FUNDING')))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 18),
+                  legend.position = "none") +
+            ylab("Count") +
+            xlab(" ") +
+            ylim(0, 80) + 
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('EXPERTISE' = "Expertise",
+                                        'TIMELINES' = "Timelines",
+                                        'PERSONNEL' = 'Personnel',
+                                        'RESOURCES_CAPACITY' = 'Resources/Capacity',
+                                        'FUNDING' = 'Funding')) +
+            ggtitle('Resources')
+
+
+
+
+####### Data ######
+
+
+data_long <- q1 %>% filter(THEME == "Data") %>% 
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+
+data_long$rank <- factor(data_long$rank, levels = c('RANK5',
+                                                              'RANK4',
+                                                              'RANK3',
+                                                              'RANK2',
+                                                              'RANK1'))
+
+
+unique(data_long$CODE)
+
+
+data <- data_long %>% 
+            ggplot(aes(y = count, fill = rank,
+                       x = factor(CODE,
+                                  level = c('SITE_INFO',
+                                            'LONGTERM_DATA',
+                                            'IMPACT_INFO',
+                                            'METHODS',
+                                            'SPECIES_DATA',
+                                            'DATA')))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            ylim(0, 80) + 
+            theme(axis.text = element_text(size = 18),
+                  legend.position = "none") +
+            ylab("Count") +
+            xlab(" ") +
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('SITE_INFO' = 'Site',
+                                        'LONGTERM_DATA' = 'Longterm',
+                                        'IMPACT_INFO' = 'Impact',
+                                        'METHODS' = 'Methods',
+                                        'SPECIES_DATA' = 'Species',
+                                        'DATA' = 'Data')) +
+            ggtitle('Data')
+
+
+
+unique(q1$THEME)
+
+####### Evidence ######
+
+
+evidence_long <- q1 %>% filter(THEME == "Evidence") %>% 
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+
+evidence_long$rank <- factor(evidence_long$rank, levels = c('RANK5',
+                                                    'RANK4',
+                                                    'RANK3',
+                                                    'RANK2',
+                                                    'RANK1'))
+
+unique(evidence_long$CODE)
+
+evidence <- evidence_long %>% 
+            ggplot(aes(y = count, fill = rank,
+                       x = factor(CODE,
+                                  level = c('CONSENSUS',
+                                            'ACCESS_TO_EVIDENCE',
+                                            'CUMULATIVE_IMPACTS',
+                                            'SCIENCE',
+                                            'PREDICTION',
+                                            'IMPLEMENTATION',
+                                            'SUCCESS_CRITERIA')))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            ylim(0, 80) + 
+            theme(axis.text = element_text(size = 18),
+                  legend.position = "none") +
+            ylab("Count") +
+            xlab(" ") +
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('CONSENSUS' = 'Consensus',
+                                        'ACCESS_TO_EVIDENCE' = ' Access',
+                                        'CUMULATIVE_IMPACTS' = 'Cumulative',
+                                        'SCIENCE' = 'Science',
+                                        'PREDICTION' = 'Prediction',
+                                        'IMPLEMENTATION' = 'Implementation',
+                                        'SUCCESS_CRITERIA' = 'Success criteria')) +
+            ggtitle("Evidence")
+
+
+# Governance  ---------------------------------------------------
+
+governance_long <- q1 %>% filter(THEME == "Governance") %>% 
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+
+governance_long$rank <- factor(governance_long$rank, levels = c('RANK5',
+                                                            'RANK4',
+                                                            'RANK3',
+                                                            'RANK2',
+                                                            'RANK1'))
+governance <- governance_long %>% 
+            ggplot(aes(y = count, fill = rank,
+                       x = factor(CODE))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 18),
+                  legend.position = "none") +
+            ylab("Count") +
+            ylim(0, 80) + 
+            xlab(" ") +
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('POLITICS' = 'Politics',
+                                        'LEGISLATION' = 'Legislation',
+                                        'INTERNAL_SUPPORT' = 'Internal Support',
+                                        'INDIGENOUS_RIGHTS' = 'Indigenous Rights')) +
+            ggtitle("Governance")
+
+# Ecological complexity ---------------------------------------------------
+
+ecological_long <- q1 %>% filter(THEME == "Ecological_complexity") %>% 
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+
+ecological_long$rank <- factor(ecological_long$rank, levels = c('RANK5',
+                                                                'RANK4',
+                                                                'RANK3',
+                                                                'RANK2',
+                                                                'RANK1'))
+ecological <- ecological_long %>% 
+            ggplot(aes(y = count, fill = rank,
+                       x = factor(CODE,
+                                  level = c('ECOLOGY',
+                                            'NATURE',
+                                            'CLIMATE_CHANGE')))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 11),
+                  legend.position = "none") +
+            ylab("Count") +
+            xlab(" ") +
+            ylim(0, 80) + 
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('ECOLOGY' = 'Ecology',
+                                        'NATURE' = 'Nature',
+                                        'CLIMATE_CHANGE' = 'Climate change')) +
+            ggtitle("Ecological Complexity")
+
+
+# Social complexity  ---------------------------------------------------
+
+social_long <- q1 %>% filter(THEME == "Social_complexity") %>% 
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+
+social_long$rank <- factor(social_long$rank, levels = c('RANK5',
+                                                                'RANK4',
+                                                                'RANK3',
+                                                                'RANK2',
+                                                                'RANK1'))
+social <- social_long %>% 
+            ggplot(aes(y = count, fill = rank,
+                       x = factor(CODE,
+                                  level = c('COSTS',
+                                            'JUSTICE',
+                                            'RESPONSIBILITIES',
+                                            'SOCPOLSCI_SYSTEMS',
+                                            'TRADEOFFS',
+                                            'COMMUNICATION_COLLABORATION')))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 11),
+                  legend.position = "none") +
+            ylab("Count") +
+            xlab(" ") +
+            ylim(0, 80) + 
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('COSTS' = 'Costs',
+                                        'JUSTICE' = 'Justice',
+                                        'RESPONSIBILITIES' = 'Responsibilities',
+                                        'SOCPOLSCI_SYSTEMS' = 'System',
+                                        'TRADEOFFS' = 'Tradeoffs',
+                                        'COMMUNICATION_COLLABORATION' = 'Communication/Collaboration')) +
+            ggtitle("Social Complexity")
+
+# Public support  ---------------------------------------------------
+
+public_long <- q1 %>% filter(THEME == "Public_support") %>% 
+            pivot_longer(RANK1:RANK5,
+                         names_to = "rank",
+                         values_to = "count")
+
+
+public_long$rank <- factor(public_long$rank, levels = c('RANK5',
+                                                        'RANK4',
+                                                        'RANK3',
+                                                        'RANK2',
+                                                        'RANK1'))
+public <- public_long %>% 
+            ggplot(aes(y = count, fill = rank,
+                       x = factor(CODE,
+                                  level = c( 'LAND_ACCESS',
+                                             'EXTERNAL_SUPPORT')))) + 
+            geom_bar(position = "stack", stat = "identity") +
+            theme_light() +
+            coord_flip() +
+            theme_minimal() +
+            theme(axis.text = element_text(size = 11),
+                  legend.position = "none") +
+            ylab("Count") +
+            xlab(" ") +
+            ylim(0, 80) + 
+            scale_fill_manual(values = colours) +
+            scale_x_discrete(labels = c('LAND_ACCESS' = 'Land access',
+                                         'EXTERNAL_SUPPORT' = 'External support')) +
+            ggtitle('Public Support')
+
+# Panel  ------------------------------------------------------------------
+
+theme_indv <- data + resources + governance + 
+            evidence + public + social +
+            ecological +
+            plot_layout(ncol = 2)
+
+layout <- "
+AABBBB
+AABBBB
+"
+
+panel_theme <- theme_bar + theme_indv + 
+            plot_layout(design = layout)
+
+ggsave("output/panel_theme_final.pdf",
+       width = 20,
+       height = 14)
+
+
+ggsave("output/panel_theme_final.tiff")
+
+ggsave("output/panel_theme_final.jpg",
        width = 20,
        height = 14)
